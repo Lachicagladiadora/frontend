@@ -1,4 +1,4 @@
-import { GET, POST } from "./fetch.utils";
+import { DELETE, GET, POST, PUT } from "./fetch.utils";
 
 export type PostOutput = {
   _id: string;
@@ -27,7 +27,24 @@ export const onPost = async (newUser: OnPostInput) => {
 
 type GetOutput = PostOutput[];
 
-export const onGet = async () => {
+export const onGetUsers = async () => {
   const response = await GET<GetOutput>(`${URI}/users`);
+  return response;
+};
+
+type OnPutInput = { userId: string; updateUser: string };
+
+export const onPut = async ({ updateUser, userId }: OnPutInput) => {
+  const response = await PUT<string, string>(
+    `${URI}/user/${userId}`,
+    updateUser
+  );
+  return response;
+};
+
+export const onDelete = async (userId: string) => {
+  console.log({ userId });
+  const response = await DELETE<string>(`${URI}/user/${userId}`);
+  console.log("delete", { response });
   return response;
 };
