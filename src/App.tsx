@@ -9,7 +9,9 @@ function App() {
   const [allUsers, setAllUsers] = useState<PostOutput[]>([]);
   const [showFormNewUser, setShowFormNewUser] = useState(false);
   const [updateUserName, setUpdateUserName] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [showFormEdit, setShowFormEdit] = useState(false);
+  const [current, setCurrent] = useState<PostOutput | null>(null);
+  // const [message, setMessage] = useState<string | null>(null);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
@@ -67,7 +69,6 @@ function App() {
     };
     onGetAllUsers();
   }, []);
-
   // todo: edit and delete
 
   return (
@@ -126,15 +127,33 @@ function App() {
               key={cur._id}
               className="p-4 border border-red-600 rounded-xl hover:bg-red-950 group/edit group/delete relative capitalize"
             >
-              {idx + 1}. {cur.userName}
+              {idx + 1}. {!showFormEdit && cur.userName}
+              {showFormEdit && cur === current && (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    onEdit({ initialValue: cur.userName, userId: cur._id });
+                    setShowFormEdit(false);
+                  }}
+                >
+                  <input
+                    type="text"
+                    value={updateUserName}
+                    onChange={(e) => setUpdateUserName(e.target.value)}
+                  />
+                  <button>Save</button>
+                </form>
+              )}
               <span className="block normal-case opacity-70">{cur.email}</span>
               <button
                 className="invisible absolute top-0 -right-12  group-hover/edit:visible text-green-600 p-1 w-24"
-                onClick={() =>
-                  onEdit({ initialValue: cur.userName, userId: cur._id })
-                }
+                onClick={() => {
+                  setShowFormEdit((prev) => !prev);
+                  setUpdateUserName(cur.userName);
+                  setCurrent(cur);
+                }}
               >
-                Edit
+                {showFormEdit ? "X" : "Edit"}
               </button>
               <button
                 className="invisible absolute bottom-0 -right-12 group-hover/delete:visible text-red-600 p-1 w-24"
@@ -145,7 +164,7 @@ function App() {
             </li>
           ))}
         </ul>
-        <div className="text-yellow-300 text-xl ">{message}</div>
+        {/* <div className="text-yellow-300 text-xl ">{message}</div> */}
       </main>
     </>
   );
