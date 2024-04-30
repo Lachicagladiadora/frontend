@@ -8,7 +8,7 @@ function App() {
   const [password, setPassword] = useState("");
   const [allUsers, setAllUsers] = useState<PostOutput[]>([]);
   const [showFormNewUser, setShowFormNewUser] = useState(false);
-  const [updateUserName, setUpdateUserName] = useState<string | null>(null);
+  const [updateUserName, setUpdateUserName] = useState<string>("");
   const [showFormEdit, setShowFormEdit] = useState(false);
   const [current, setCurrent] = useState<PostOutput | null>(null);
   // const [message, setMessage] = useState<string | null>(null);
@@ -42,15 +42,15 @@ function App() {
     console.log("start put");
     setUpdateUserName(initialValue);
     if (!updateUserName) return;
-    console.log("start put 2");
 
+    console.log("start put 2");
     const resPut = await onPut({
       updateUser: updateUserName,
       userId: userId,
     });
     console.log({ resPut });
-    const users = await onGetUsers();
-    setAllUsers(users);
+    // const users = await onGetUsers();
+    // setAllUsers(users);
     console.log("end put");
   };
 
@@ -60,6 +60,7 @@ function App() {
     // setMessage(response);
     const users = await onGetUsers();
     setAllUsers(users);
+    setShowFormEdit(false);
   };
 
   useEffect(() => {
@@ -127,13 +128,12 @@ function App() {
               key={cur._id}
               className="p-4 border border-red-600 rounded-xl hover:bg-red-950 group/edit group/delete relative capitalize"
             >
-              {idx + 1}. {!showFormEdit && cur.userName}
+              {idx + 1}. {!showFormEdit && cur !== current && cur.userName}
               {showFormEdit && cur === current && (
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
                     onEdit({ initialValue: cur.userName, userId: cur._id });
-                    setShowFormEdit(false);
                   }}
                 >
                   <input
